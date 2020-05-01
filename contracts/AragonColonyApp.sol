@@ -36,11 +36,31 @@ contract AragonColonyApp is AragonApp {
         uint256 _amount,
         address _token
     ) external auth(MOVE_FUNDS_ROLE) {
+        uint256 permissionDomainId = 1;
+        uint256 permissionDomainSkillId = client.getDomain(permissionDomainId).skillId;
+
+        uint256 fromDomainId = client.getDomainFromFundingPot(_fromPot);
+        uint256 toDomainId = client.getDomainFromFundingPot(_toPot);
+
+        uint256 fromDomainSkillId = client.getDomain(fromDomainId).skillId;
+        uint256 toDomainSkillId = client.getDomain(toDomainId).skillId;
+
+        uint256[] childSkills = network.getSkill(permissionDomainSkillId).children;
+
+        for (index = 0; index < childSkills.length; index++) {
+            if (fromDomainSkillId == childSkills[index]) {
+                fromChildSkillIndex = index;
+            }
+            else if (toDomainSkillId == childSkills[index]) {
+                toChildSkillIndex = index;
+            }
+        }
+
         bytes memory encodedFunctionCall = abi.encodeWithSignature(
             "moveFundsBetweenPots(uint256 _permissionDomainId, uint256 _fromChildSkillIndex, uint256 _toChildSkillIndex, uint256 _fromPot, uint256 _toPot, uint256 _amount, address _token)",
-            _permissionDomainId,
-            _fromChildSkillIndex,
-            _toChildSkillIndex,
+            permissionDomainId,
+            fromChildSkillIndex,
+            toChildSkillIndex,
             _fromPot,
             _toPot,
             _amount,
