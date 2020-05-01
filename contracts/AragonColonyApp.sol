@@ -6,9 +6,19 @@ import "./colony/IColonyNetwork.sol";
 import "./colony/IColony.sol";
 
 contract AragonColonyApp is AragonApp {
+    bytes32 constant public MOVE_FUNDS_ROLE = keccak256("MOVE_FUNDS_ROLE");
+
     Agent public agent;
-    ColonyNetwork public network;
-    ColonyClient public client;
+    IColonyNetwork public network;
+    IColony public client;
+
+    event AppInitialized();
+    event FundsMoved(
+        uint256 _fromPot,
+        uint256 _toPot,
+        uint256 _amount,
+        address _token
+    );
 
     function initialize(Agent _agent, IColonyNetwork _network, address _colony) public onlyInit {
         require(isContract(address(_agent)), ERROR_AGENT_NOT_CONTRACT);
@@ -21,6 +31,7 @@ contract AragonColonyApp is AragonApp {
         require(isContract(address(client)), ERROR_CLIENT_NOT_CONTRACT);
 
         initialized();
+        emit AppInitialized();
     }
 
     /**
@@ -68,5 +79,6 @@ contract AragonColonyApp is AragonApp {
         );
 
         _safeExecuteNoError(client, encodedFunctionCall, ERROR_MOVE_FUNDS_FAILED);
+        emit FundsMoved(_fromPot, _toPot, _amount, _token);
     }
 }
