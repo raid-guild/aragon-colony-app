@@ -1,4 +1,4 @@
-pragma solidity >=0.5.8;
+pragma solidity ^0.4.24;
 
 import "@aragon/os/contracts/apps/AragonApp.sol";
 import "@aragon/apps-agent/contracts/Agent.sol";
@@ -7,6 +7,11 @@ import "./colony/IColony.sol";
 
 contract AragonColonyApp is AragonApp {
     bytes32 constant public MOVE_FUNDS_ROLE = keccak256("MOVE_FUNDS_ROLE");
+
+    string private constant ERROR_AGENT_NOT_CONTRACT = "COLONY_AGENT_NOT_CONTRACT";
+    string private constant ERROR_NETWORK_NOT_CONTRACT = "COLONY_NETWORK_NOT_CONTRACT";
+    string private constant ERROR_CLIENT_NOT_CONTRACT = "COLONY_CLIENT_NOT_CONTRACT";
+    string private constant ERROR_MOVE_FUNDS_FAILED = "COLONY_MOVE_FUNDS_FAILED";
 
     Agent public agent;
     IColonyNetwork public network;
@@ -34,6 +39,8 @@ contract AragonColonyApp is AragonApp {
         emit AppInitialized();
     }
 
+    function _safeExecuteNoError() internal {}
+
     /**
      * @notice Move funds between the colony's domains.
      * @param _fromPot Pot ID to be transferred from
@@ -57,8 +64,10 @@ contract AragonColonyApp is AragonApp {
         uint256 toDomainSkillId = client.getDomain(toDomainId).skillId;
 
         uint256[] childSkills = network.getSkill(permissionDomainSkillId).children;
+        uint256 fromChildSkillIndex;
+        uint256 toChildSkillIndex;
 
-        for (index = 0; index < childSkills.length; index++) {
+        for (uint256 index = 0; index < childSkills.length; index++) {
             if (fromDomainSkillId == childSkills[index]) {
                 fromChildSkillIndex = index;
             }

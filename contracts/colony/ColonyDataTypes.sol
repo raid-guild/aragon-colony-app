@@ -15,7 +15,7 @@
   along with The Colony Network. If not, see <http://www.gnu.org/licenses/>.
 */
 
-pragma solidity >=0.5.8;
+pragma solidity ^0.4.24;
 
 
 contract ColonyDataTypes {
@@ -213,7 +213,7 @@ contract ColonyDataTypes {
   }
 
   struct ExpenditureSlot {
-    address payable recipient;
+    address recipient;
     uint256 claimDelay;
     int256 payoutModifier;
     uint256[] skills;
@@ -222,7 +222,7 @@ contract ColonyDataTypes {
   enum ExpenditureStatus { Active, Cancelled, Finalized }
 
   struct Payment {
-    address payable recipient;
+    address recipient;
     bool finalized;
     uint256 fundingPotId;
     uint256 domainId;
@@ -254,7 +254,7 @@ contract ColonyDataTypes {
 
   struct Role {
     // Address of the user for the given role
-    address payable user;
+    address user;
     // Whether the user failed to submit their rating
     bool rateFail;
     // Rating the user received
