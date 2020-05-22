@@ -1,7 +1,7 @@
 pragma solidity >=0.5.8;
 
-import "../node_modules/@aragon/os/contracts/apps/AragonApp.sol";
-import "../node_modules/@aragon/apps-agent/contracts/Agent.sol";
+import "@aragon/os/contracts/apps/AragonApp.sol";
+import "@aragon/apps-agent/contracts/Agent.sol";
 import "./colony/IColonyNetwork.sol";
 import "./colony/IColony.sol";
 
