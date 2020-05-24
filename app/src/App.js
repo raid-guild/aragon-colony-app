@@ -1,87 +1,63 @@
-import React from 'react'
-import { useAragonApi } from '@aragon/api-react'
-import {
-  Box,
-  Button,
-  GU,
-  Header,
-  IconMinus,
-  IconPlus,
-  Main,
-  SyncIndicator,
-  Tabs,
-  Text,
-  textStyle,
-} from '@aragon/ui'
-import styled from 'styled-components'
+import React, { useState } from "react";
+import { useAragonApi } from "@aragon/api-react";
+import { Button, Header, Main, SyncIndicator, SidePanel } from "@aragon/ui";
+import ColonyInfoBox from "./components/ColonyInfoBox";
+import PodsTable from "./components/PodsTable";
+import MoveFundsForm from "./components/MoveFundsForm";
+
+const pods = ["Pod 1", "Pod 2", "Pod 3", "Pod 4"];
 
 function App() {
-  const { api, appState, path, requestPath } = useAragonApi()
-  const { count, isSyncing } = appState
+  const { api, appState } = useAragonApi();
+  const { count, isSyncing } = appState;
+  const [sidePanelOpened, setSidePanelOpened] = useState(false);
 
-  const pathParts = path.match(/^\/tab\/([0-9]+)/)
-  const pageIndex = Array.isArray(pathParts)
-    ? parseInt(pathParts[1], 10) - 1
-    : 0
+  function onMoveFunds({ fromPod, toPod, amount, token }) {
+    console.log({ fromPod, toPod, amount, token });
+    setSidePanelOpened(false);
+
+    // Call smart contract action
+    api.moveFundsBetweenPots(fromPod, toPod, amount, token).toPromise();
+
+    // Counter App example
+    // api.decrement(1).toPromise();
+    // api.increment(1).toPromise();
+  }
+
+  const errors = [];
 
   return (
     <Main>
       {isSyncing && <SyncIndicator />}
       <Header
-        primary="Counter"
+        primary="Colony"
         secondary={
-          <Text
-            css={`
-              ${textStyle('title2')}
-            `}
-          >
-            {count}
-          </Text>
+          <Button
+            mode="strong"
+            label="Move funds"
+            onClick={() => setSidePanelOpened(true)}
+          />
         }
       />
-      <Tabs
-        items={['Tab 1', 'Tab 2']}
-        selected={pageIndex}
-        onChange={index => requestPath(`/tab/${index + 1}`)}
+
+      <ColonyInfoBox />
+      <PodsTable
+        pods={pods.map((pod) => ({
+          name: pod,
+          account: "0x0000000000000000000000000000000000000000",
+          amount: "7.900,33 TKN1",
+        }))}
       />
-      <Box
-        css={`
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          text-align: center;
-          height: ${50 * GU}px;
-          ${textStyle('title3')};
-        `}
+
+      <SidePanel
+        title="Move funds"
+        opened={sidePanelOpened}
+        onClose={() => setSidePanelOpened(false)}
       >
-        Count: {count}
-        <Buttons>
-          <Button
-            display="icon"
-            icon={<IconMinus />}
-            label="Decrement"
-            onClick={() => api.decrement(1).toPromise()}
-          />
-          <Button
-            display="icon"
-            icon={<IconPlus />}
-            label="Increment"
-            onClick={() => api.increment(1).toPromise()}
-            css={`
-              margin-left: ${2 * GU}px;
-            `}
-          />
-        </Buttons>
-      </Box>
+        <MoveFundsForm pods={pods} onMoveFunds={onMoveFunds} />
+      </SidePanel>
     </Main>
-  )
+  );
 }
 
-const Buttons = styled.div`
-  display: grid;
-  grid-auto-flow: column;
-  grid-gap: 40px;
-  margin-top: 20px;
-`
-
-export default App
+export default App;
