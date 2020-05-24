@@ -8,28 +8,37 @@
  * 2) A "bre" or BuidlerRuntimeEnvironment object that contains enviroment objects like web3, Truffle artifacts, etc.
  *
  * Please see AragonConfigHooks, in the plugin's types for further details on these interfaces.
- * https://github.com/aragon/buidler-aragon/blob/develop/src/types.ts#L22
+ * https://github.com/aragon/buidler-aragon/blob/develop/src/types.ts#L31
  */
 
 module.exports = {
   // Called before a dao is deployed.
-  preDao: async ({}, { web3, artifacts }) => {},
+  preDao: async ({ log }, { web3, artifacts }) => {},
 
   // Called after a dao is deployed.
-  postDao: async ({ dao }, { web3, artifacts }) => {},
+  postDao: async (
+    { dao, _experimentalAppInstaller, log },
+    { web3, artifacts }
+  ) => {},
 
   // Called after the app's proxy is created, but before it's initialized.
-  preInit: async ({ proxy }, { web3, artifacts }) => {},
+  preInit: async (
+    { proxy, _experimentalAppInstaller, log },
+    { web3, artifacts }
+  ) => {},
 
   // Called after the app's proxy is initialized.
-  postInit: async ({ proxy }, { web3, artifacts }) => {},
+  postInit: async (
+    { proxy, _experimentalAppInstaller, log },
+    { web3, artifacts }
+  ) => {},
 
   // Called when the start task needs to know the app proxy's init parameters.
   // Must return an array with the proxy's init parameters.
-  getInitParams: async ({}, { web3, artifacts }) => {
-    return [];
+  getInitParams: async ({ log }, { web3, artifacts }) => {
+    return [42]
   },
 
   // Called after the app's proxy is updated with a new implementation.
-  postUpdate: async ({ proxy }, { web3, artifacts }) => {}
-};
+  postUpdate: async ({ proxy, log }, { web3, artifacts }) => {},
+}

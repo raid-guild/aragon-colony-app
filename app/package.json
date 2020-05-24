@@ -1,15 +1,17 @@
 {
-  "name": "aragon-colony-app-frontend",
+  "name": "foo-frontend",
   "version": "1.0.0",
   "main": "src/index.js",
   "dependencies": {
-    "@aragon/api": "^2.0.0-beta.9",
-    "@aragon/api-react": "^2.0.0-beta.9",
+    "@aragon/api": "^2.0.0-beta.8",
+    "@aragon/api-react": "^2.0.0-beta.8",
     "@aragon/ui": "^1.0.0",
     "core-js": "^3.6.4",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
-    "regenerator-runtime": "^0.13.2"
+    "regenerator-runtime": "^0.13.2",
+    "rxjs": "^6.5.4",
+    "styled-components": "^4.4.1"
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",
