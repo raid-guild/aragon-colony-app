@@ -2,14 +2,14 @@ import React from "react";
 import PropTypes from "prop-types";
 import { IdentityBadge, DataView } from "@aragon/ui";
 
-function PodsTable({ pods }) {
+function FundingPotsTable({ pots }) {
   return (
     <DataView
       fields={["Name", "Account", "Amount"]}
-      entries={pods.map((pod) => ({
-        name: pod.name,
-        account: pod.account,
-        amount: pod.amount,
+      entries={pots.map((pot) => ({
+        name: pot.name,
+        account: pot.account,
+        amount: pot.amount,
       }))}
       renderEntry={({ name, account, amount }) => {
         return [
@@ -22,8 +22,8 @@ function PodsTable({ pods }) {
   );
 }
 
-PodsTable.propTypes = {
-  pods: PropTypes.arrayOf(
+FundingPotsTable.propTypes = {
+  pots: PropTypes.arrayOf(
     PropTypes.shape({
       name: PropTypes.string.isRequired,
       account: PropTypes.string.isRequired,
@@ -32,4 +32,4 @@ PodsTable.propTypes = {
   ),
 };
 
-export default PodsTable;
+export default FundingPotsTable;

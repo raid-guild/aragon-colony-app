@@ -2,26 +2,22 @@ import React, { useState } from "react";
 import { useAragonApi } from "@aragon/api-react";
 import { Button, Header, Main, SyncIndicator, SidePanel } from "@aragon/ui";
 import ColonyInfoBox from "./components/ColonyInfoBox";
-import PodsTable from "./components/PodsTable";
+import FundingPotsTable from "./components/FundingPotsTable";
 import MoveFundsForm from "./components/MoveFundsForm";
 
-const pods = ["Pod 1", "Pod 2", "Pod 3", "Pod 4"];
+const pots = ["Pot 1", "Pot 2", "Pot 3", "Pot 4"];
 
 function App() {
   const { api, appState } = useAragonApi();
-  const { count, isSyncing } = appState;
+  const { isSyncing } = appState;
   const [sidePanelOpened, setSidePanelOpened] = useState(false);
 
-  function onMoveFunds({ fromPod, toPod, amount, token }) {
-    console.log({ fromPod, toPod, amount, token });
+  function onMoveFunds({ fromPot, toPot, amount, token }) {
+    console.log({ fromPot, toPot, amount, token });
     setSidePanelOpened(false);
 
     // Call smart contract action
-    api.moveFundsBetweenPots(fromPod, toPod, amount, token).toPromise();
-
-    // Counter App example
-    // api.decrement(1).toPromise();
-    // api.increment(1).toPromise();
+    api.moveFundsBetweenPots(fromPot, toPot, amount, token).toPromise();
   }
 
   const errors = [];
@@ -41,9 +37,9 @@ function App() {
       />
 
       <ColonyInfoBox />
-      <PodsTable
-        pods={pods.map((pod) => ({
-          name: pod,
+      <FundingPotsTable
+        pots={pots.map((pot) => ({
+          name: pot,
           account: "0x0000000000000000000000000000000000000000",
           amount: "7.900,33 TKN1",
         }))}
@@ -54,7 +50,7 @@ function App() {
         opened={sidePanelOpened}
         onClose={() => setSidePanelOpened(false)}
       >
-        <MoveFundsForm pods={pods} onMoveFunds={onMoveFunds} />
+        <MoveFundsForm pots={pots} onMoveFunds={onMoveFunds} />
       </SidePanel>
     </Main>
   );

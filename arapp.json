@@ -1,7 +1,7 @@
 {
   "roles": [
     {
-      "name": "Move funds between pods",
+      "name": "Move funds between funding pots",
       "id": "MOVE_FUNDS_ROLE",
       "params": []
     }

@@ -6,16 +6,16 @@ import styled from "styled-components";
 const tokens = ["TKN1", "TKN2", "TKN3"];
 const maxAmount = 100000;
 
-function MoveFundsForm({ pods, onMoveFunds }) {
-  const [fromPodIdx, setFromPodIdx] = useState(0);
-  const [toPodIdx, setToPodIdx] = useState(0);
+function MoveFundsForm({ pots, onMoveFunds }) {
+  const [fromPotIdx, setFromPotIdx] = useState(0);
+  const [toPotIdx, setToPotIdx] = useState(0);
   const [amount, setAmount] = useState(0);
   const [tokenIdx, setTokenIdx] = useState(0);
 
   function onSubmit() {
     onMoveFunds({
-      fromPod: pods[fromPodIdx],
-      toPod: pods[toPodIdx],
+      fromPot: pots[fromPotIdx],
+      toPot: pots[toPotIdx],
       amount,
       token: tokens[tokenIdx],
     });
@@ -29,23 +29,23 @@ function MoveFundsForm({ pods, onMoveFunds }) {
         margin-top: ${3 * GU}px;
       `}
     >
-      <Field label="From pod">
+      <Field label="From pot">
         <DropDown
           header="Outcome"
           placeholder="Outcome"
-          selected={fromPodIdx}
-          onChange={setFromPodIdx}
-          items={pods}
+          selected={fromPotIdx}
+          onChange={setFromPotIdx}
+          items={pots}
           wide
         />
       </Field>
-      <Field label="To pod">
+      <Field label="To pot">
         <DropDown
           header="Outcome"
           placeholder="Outcome"
-          selected={toPodIdx}
-          onChange={setToPodIdx}
-          items={pods}
+          selected={toPotIdx}
+          onChange={setToPotIdx}
+          items={pots}
           wide
         />
       </Field>
@@ -88,7 +88,7 @@ const InputGroup = styled.div`
 `;
 
 MoveFundsForm.propTypes = {
-  pods: PropTypes.arrayOf(PropTypes.string).isRequired,
+  pots: PropTypes.arrayOf(PropTypes.string).isRequired,
   onMoveFunds: PropTypes.func.isRequired,
 };
 
