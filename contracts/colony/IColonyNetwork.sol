@@ -15,8 +15,8 @@
   along with The Colony Network. If not, see <http://www.gnu.org/licenses/>.
 */
 
-pragma solidity >=0.5.8; // ignore-swc-103
-pragma experimental "ABIEncoderV2";
+pragma solidity ^0.4.24;
+pragma experimental ABIEncoderV2;
 
 import "./../common/IRecovery.sol";
 import "./ColonyNetworkDataTypes.sol";
@@ -70,7 +70,7 @@ contract IColonyNetwork is ColonyNetworkDataTypes, IRecovery {
 
   /// @notice Get the Meta Colony address.
   /// @return colonyAddress The Meta colony address, if no colony was found, returns 0x0
-  function getMetaColony() public view returns (address payable colonyAddress);
+  function getMetaColony() public view returns (address colonyAddress);
 
   /// @notice Get the number of colonies in the network.
   /// @return count The colony count

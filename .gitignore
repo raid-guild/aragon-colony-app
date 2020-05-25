@@ -3,4 +3,5 @@ artifacts
 .cache
 cache
 dist
+ipfs.cmd
 package-lock.json

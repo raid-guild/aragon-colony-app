@@ -15,7 +15,7 @@
   along with The Colony Network. If not, see <http://www.gnu.org/licenses/>.
 */
 
-pragma solidity >=0.5.8; // ignore-swc-103
+pragma solidity ^0.4.24;
 pragma experimental ABIEncoderV2;
 
 import "./../common/IRecovery.sol";
@@ -217,7 +217,7 @@ contract IColony is ColonyDataTypes, IRecovery {
   /// @param _id Id of the expenditure
   /// @param _slot Slot for the recipient address
   /// @param _recipient Address of the recipient
-  function setExpenditureRecipient(uint256 _id, uint256 _slot, address payable _recipient) public;
+  function setExpenditureRecipient(uint256 _id, uint256 _slot, address _recipient) public;
 
   /// @notice Set the token payout on an expenditure slot. Can only be called by expenditure owner.
   /// @param _id Id of the expenditure
@@ -305,7 +305,7 @@ contract IColony is ColonyDataTypes, IRecovery {
   function addPayment(
     uint256 _permissionDomainId,
     uint256 _childSkillIndex,
-    address payable _recipient,
+    address _recipient,
     address _token,
     uint256 _amount,
     uint256 _domainId,
@@ -324,7 +324,7 @@ contract IColony is ColonyDataTypes, IRecovery {
   /// @param _childSkillIndex The index that the `_domainId` is relative to `_permissionDomainId`
   /// @param _id Payment identifier
   /// @param _recipient Address of the payment recipient
-  function setPaymentRecipient(uint256 _permissionDomainId, uint256 _childSkillIndex, uint256 _id, address payable _recipient) public;
+  function setPaymentRecipient(uint256 _permissionDomainId, uint256 _childSkillIndex, uint256 _id, address _recipient) public;
 
   /// @notice Sets the skill on an existing payment. Secured function to authorised members.
   /// @param _permissionDomainId The domainId in which I have the permission to take this action
@@ -468,7 +468,7 @@ contract IColony is ColonyDataTypes, IRecovery {
   /// @param _user Address of the user we want to give a manager role to
   /// @param _permissionDomainId The domain ID in which _user has the Administration permission
   /// @param _childSkillIndex The index that the `_domainId` is relative to `_permissionDomainId`
-  function setTaskManagerRole(uint256 _id, address payable _user, uint256 _permissionDomainId, uint256 _childSkillIndex) public;
+  function setTaskManagerRole(uint256 _id, address _user, uint256 _permissionDomainId, uint256 _childSkillIndex) public;
 
   /// @notice Assigning evaluator role.
   /// Can only be set if there is no one currently assigned to be an evaluator.
@@ -477,7 +477,7 @@ contract IColony is ColonyDataTypes, IRecovery {
   /// @dev This function can only be called through `executeTaskRoleAssignment`.
   /// @param _id Id of the task
   /// @param _user Address of the user we want to give a evaluator role to
-  function setTaskEvaluatorRole(uint256 _id, address payable _user) public;
+  function setTaskEvaluatorRole(uint256 _id, address _user) public;
 
   /// @notice Assigning worker role.
   /// Can only be set if there is no one currently assigned to be a worker.
@@ -485,7 +485,7 @@ contract IColony is ColonyDataTypes, IRecovery {
   /// @dev This function can only be called through `executeTaskRoleAssignment`.
   /// @param _id Id of the task
   /// @param _user Address of the user we want to give a worker role to
-  function setTaskWorkerRole(uint256 _id, address payable _user) public;
+  function setTaskWorkerRole(uint256 _id, address _user) public;
 
   /// @notice Removing evaluator role.
   /// Agreed between manager and currently assigned evaluator.
