@@ -6,3 +6,6 @@ dist
 ipfs.cmd
 package-lock.json
 yarn-error.log
+
+# Patch package
+patch-package-error.json.gz
