@@ -1,0 +1,92 @@
+diff --git a/node_modules/@aragon/buidler-aragon/dist/src/tasks/start-task.js b/node_modules/@aragon/buidler-aragon/dist/src/tasks/start-task.js
+index 54a37a9..6dbb0a9 100644
+--- a/node_modules/@aragon/buidler-aragon/dist/src/tasks/start-task.js
++++ b/node_modules/@aragon/buidler-aragon/dist/src/tasks/start-task.js
+@@ -52,7 +52,7 @@ App id: ${appId}`);
+         }
+         logger_1.logMain(`Accounts mnemonic "${params_1.aragenMnemonic}"
+ ${accountsStr}`);
+-        const { daoAddress, appAddress, close: closeBackend } = await start_backend_1.startBackend({ appName, silent: params.silent }, bre);
++        const { daoAddress, appAddress, ensAddress, close: closeBackend } = await start_backend_1.startBackend({ appName, silent: params.silent }, bre);
+         const closeHandlers = [];
+         closeHandlers.push(closeBackend);
+         const config = bre.config.aragon;
+@@ -70,7 +70,7 @@ ${accountsStr}`);
+             const { close: closeFrontend } = await start_frontend_1.startFrontend(bre);
+             closeHandlers.push(closeFrontend);
+         }
+-        const { close: closeClient } = await start_client_1.startClient(bre, daoAddress, appAddress, !params.noBrowser);
++        const { close: closeClient } = await start_client_1.startClient(bre, daoAddress, appAddress, ensAddress, !params.noBrowser);
+         closeHandlers.push(closeClient);
+         function close() {
+             for (const closeHandler of closeHandlers)
+diff --git a/node_modules/@aragon/buidler-aragon/dist/src/tasks/start/client/aragon-client.js b/node_modules/@aragon/buidler-aragon/dist/src/tasks/start/client/aragon-client.js
+index a1e6312..6916de8 100644
+--- a/node_modules/@aragon/buidler-aragon/dist/src/tasks/start/client/aragon-client.js
++++ b/node_modules/@aragon/buidler-aragon/dist/src/tasks/start/client/aragon-client.js
+@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
+     return (mod && mod.__esModule) ? mod : { "default": mod };
+ };
+ Object.defineProperty(exports, "__esModule", { value: true });
++const fs = require("fs");
+ const execa_1 = __importDefault(require("execa"));
+ const live_server_1 = __importDefault(require("live-server"));
+ const os_1 = __importDefault(require("os"));
+@@ -14,8 +15,8 @@ const fsUtils_1 = require("~/src/utils/fsUtils");
+ const defaultRepo = 'https://github.com/aragon/aragon';
+ const defaultVersion = '775edd606333a111eb2693df53900039722a95dc';
+ const aragonBaseDir = path_1.default.join(os_1.default.homedir(), '.aragon');
+-async function installAragonClientIfNeeded(repo = defaultRepo, version = defaultVersion) {
+-    const clientPath = _getClientPath(version);
++async function installAragonClientIfNeeded(_clientPath, repo = defaultRepo, version = defaultVersion) {
++    const clientPath = _clientPath || _getClientPath(version);
+     if (await _checkClientInstallationNeeded(clientPath)) {
+         fsUtils_1.ensureDir(clientPath);
+         logger_1.logFront(`Installing client version ${version} locally (takes a couple of minutes)...`);
+@@ -55,9 +56,9 @@ async function _checkClientInstallationNeeded(clientPath) {
+  * Prepares and starts the aragon client
+  * @return The URL at which the client is available
+  */
+-async function startAragonClient(clientServePort, subPath, autoOpen = true) {
++async function startAragonClient(_clientPath, clientServePort, subPath, autoOpen = true) {
+     const port = clientServePort;
+-    const clientPath = _getClientPath(defaultVersion);
++    const clientPath = _clientPath || _getClientPath(defaultVersion);
+     const buildPath = path_1.default.join(clientPath, 'build');
+     logger_1.logFront(`Serving client files at ${clientPath} at port ${port}...`);
+     const closeStaticServer = _createStaticWebserver(port, buildPath);
+diff --git a/node_modules/@aragon/buidler-aragon/dist/src/tasks/start/start-backend.js b/node_modules/@aragon/buidler-aragon/dist/src/tasks/start/start-backend.js
+index 146893a..87d7107 100644
+--- a/node_modules/@aragon/buidler-aragon/dist/src/tasks/start/start-backend.js
++++ b/node_modules/@aragon/buidler-aragon/dist/src/tasks/start/start-backend.js
+@@ -129,6 +129,7 @@ async function startBackend({ appName, silent }, bre) {
+     return {
+         daoAddress: dao.address,
+         appAddress: proxy.address,
++        ensAddress,
+         close: () => {
+             contractsWatcher.close();
+             if (closeGanache)
+diff --git a/node_modules/@aragon/buidler-aragon/dist/src/tasks/start/start-client.js b/node_modules/@aragon/buidler-aragon/dist/src/tasks/start/start-client.js
+index 2389857..3341fa5 100644
+--- a/node_modules/@aragon/buidler-aragon/dist/src/tasks/start/start-client.js
++++ b/node_modules/@aragon/buidler-aragon/dist/src/tasks/start/start-client.js
+@@ -6,14 +6,15 @@ const aragon_client_1 = require("./client/aragon-client");
+  * Retrieves the Aragon client using git, builds it, builds the app's frontend and serves the build.
+  * Starts the Aragon client pointed at a Dao and an app, and watches for changes on the app's sources.
+  */
+-async function startClient(bre, daoAddress, appAddress, openBrowser) {
++async function startClient(bre, daoAddress, appAddress, ensAddress, openBrowser) {
+     const config = bre.config.aragon;
+     logger_1.logFront('Checking Aragon client...');
+-    await aragon_client_1.installAragonClientIfNeeded();
++    await aragon_client_1.installAragonClientIfNeeded(config.clientPath);
+     // Start Aragon client at the deployed address.
+     const appServePort = config.appServePort;
+     const appURL = `http://localhost:${appServePort}`;
+-    const { url: clientURL, close: closeStaticServer } = await aragon_client_1.startAragonClient(config.clientServePort, `${daoAddress}/${appAddress}`, openBrowser);
++    const subPath = `${daoAddress}/${appAddress}?ens=${ensAddress}`
++    const { url: clientURL, close: closeStaticServer } = await aragon_client_1.startAragonClient(config.clientPath, config.clientServePort, subPath, openBrowser);
+     logger_1.logFront(`You can now view the Aragon client in the browser.
+ App content: ${appURL}
+ Client:  ${clientURL}`);
