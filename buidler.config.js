@@ -8,6 +8,9 @@ module.exports = {
   defaultNetwork: "localhost",
   networks: {
     localhost: {
+      url: "http://localhost:8545"
+    },
+    colony: {
       url: "http://localhost:8545",
       accounts: [
         "0x0355596cdb5e5242ad082c4fe3f8bbe48c9dba843fe1f99dd8272f487e70efae",

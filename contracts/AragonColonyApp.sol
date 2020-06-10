@@ -4,6 +4,8 @@ import "@aragon/os/contracts/apps/AragonApp.sol";
 import "@aragon/apps-agent/contracts/Agent.sol";
 import "./colony/IColonyNetwork.sol";
 import "./colony/IColony.sol";
+// Mock colony
+import "./MockColony.sol";
 
 
 contract AragonColonyApp is AragonApp {
@@ -16,7 +18,7 @@ contract AragonColonyApp is AragonApp {
 
     Agent public agent;
     IColonyNetwork public network;
-    IColony public client;
+    MockColony public client;
 
     event AppInitialized();
     event FundsMoved(
@@ -39,6 +41,11 @@ contract AragonColonyApp is AragonApp {
         // client = network.getColonyClientByAddress(_colony);
 
         // require(isContract(address(client)), ERROR_CLIENT_NOT_CONTRACT);
+
+        // #################
+        // Mock colony state
+        // #################
+        client = new MockColony();
 
         initialized();
         emit AppInitialized();

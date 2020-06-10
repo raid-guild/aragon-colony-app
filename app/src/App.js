@@ -1,16 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAragonApi } from "@aragon/api-react";
 import { Button, Header, Main, SyncIndicator, SidePanel } from "@aragon/ui";
 import ColonyInfoBox from "./components/ColonyInfoBox";
 import FundingPotsTable from "./components/FundingPotsTable";
 import MoveFundsForm from "./components/MoveFundsForm";
-
-const pots = ["Pot 1", "Pot 2", "Pot 3", "Pot 4"];
+import { getFundingPots } from "./getFundingPots";
 
 function App() {
-  const { api, appState } = useAragonApi();
+  const { api, appState, currentApp } = useAragonApi();
   const { isSyncing } = appState;
   const [sidePanelOpened, setSidePanelOpened] = useState(false);
+  const [pots, setPots] = useState([]);
 
   function onMoveFunds({ fromPot, toPot, amount, token }) {
     console.log({ fromPot, toPot, amount, token });
@@ -19,6 +19,17 @@ function App() {
     // Call smart contract action
     api.moveFundsBetweenPots(fromPot, toPot, amount, token).toPromise();
   }
+
+  const appAddress = (currentApp || {}).appAddress;
+
+  useEffect(() => {
+    getFundingPots({
+      appAddress,
+      networkUrl: "http://localhost:8545",
+    })
+      .then(setPots)
+      .catch(console.error);
+  }, [appAddress]);
 
   const errors = [];
 
@@ -39,9 +50,10 @@ function App() {
       <ColonyInfoBox />
       <FundingPotsTable
         pots={pots.map((pot) => ({
-          name: pot,
+          name: `${pot.id}`,
           account: "0x0000000000000000000000000000000000000000",
-          amount: "7.900,33 TKN1",
+          associatedType: pot.associatedType,
+          amount: `${pot.balance} TKN1`,
         }))}
       />
 
